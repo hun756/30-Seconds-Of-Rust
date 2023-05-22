@@ -3,6 +3,7 @@ mod algorithm;
 #[cfg(test)]
 mod tests {
     use crate::algorithm::{
+        accumulate::accumulate,
         all::all, 
         average::average, 
         factorial::Factorial
@@ -29,6 +30,47 @@ mod tests {
         assert_eq!(average([1.0, 2.0, 3.0]), 2.0);
         assert_eq!(average([5.0]), 5.0);
         assert_eq!(average(std::iter::empty::<f64>()), 0.0);
+    }
+
+    #[test]
+    fn test_accumulate_sum() {
+        let v = vec![1, 2, 3, 4, 5];
+        let sum = accumulate(v.into_iter(), 0, |a, b| a + b);
+        assert_eq!(sum, 15);
+    }
+
+    #[test]
+    fn test_accumulate_product() {
+        let v = vec![1, 2, 3, 4, 5];
+        let product = accumulate(v.into_iter(), 1, |a, b| a * b);
+        assert_eq!(product, 120);
+    }
+
+    #[test]
+    fn test_gcd() {
+        let v = vec![10, 2, 4, 6];
+        let gcd = accumulate(v.into_iter(), 0, |a, b| helper::gcd(a, b));
+        assert_eq!(gcd, 2);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_empty() {
+        let v: Vec<i32> = vec![];
+        let _result = accumulate(v.into_iter(), 0, |a, b| a + b);
+        let v: Vec<i32> = vec![];
+        let _result = accumulate(v.into_iter(), None.unwrap(), |a, b| a + b);
+
+    }
+
+    mod helper {
+        pub fn gcd(a: i32, b: i32) -> i32 {
+            if b == 0 {
+                a
+            } else {
+                gcd(b, a % b)
+            }
+        }
     }
 }
 
